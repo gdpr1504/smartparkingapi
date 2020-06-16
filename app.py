@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from resources.student import StudentRegister
+from resources.admin import AdminRegister
 
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS']=True
@@ -24,6 +25,7 @@ def invalid_token_callback(error):
     }), 401
 
 api.add_resource(StudentRegister, '/studentregister')
+api.add_resource(AdminRegister, '/adminregister')
 
 if __name__ == '__main__':
     app.run()

@@ -1,5 +1,6 @@
 flask
 flask_RESTful
+flask-bcrypt
 flask-jwt-extended
 pymysql
 gunicorn
