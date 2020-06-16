@@ -20,14 +20,14 @@ class StudentRegister(Resource):
         data = parser.parse_args()
 
         try:
-            isAlreadyPresent = query(f"""SELECT * FROM students WHERE srollno = {data['srollno']}""", return_json = False)
+            isAlreadyPresent = query(f"""SELECT * FROM STUDENTS WHERE srollno = '{data['srollno']}'""", return_json = False)
             if len(isAlreadyPresent) > 0:
                 return {"message":"Student with given roll no already exists"},400
         except:
-            return {"message":"Error inserting into STUDENTS"},500
+            return {"message":"Error inserting into STUDENTS1"},500
 
         try:
-            query(f"""INSERT INTO students VALUES (
+            query(f"""INSERT INTO STUDENTS VALUES (
                                                             '{data['srollno']}',
                                                             '{data['spassword']}',
                                                             '{data['sname']}',
