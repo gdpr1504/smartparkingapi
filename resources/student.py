@@ -15,7 +15,7 @@ class StudentRegister(Resource):
         parser.add_argument('semail', type = str, required = True, help = 'email cannot be left blank')
         parser.add_argument('sphone', type = str, required = True, help = 'phone no cannot be left blank')
         parser.add_argument('spgname', type = str, required = True, help = 'Parent/Guardian name cannot be left blank')
-        parser.add_argument('spgemail', type = str, required = True, help = 'Parent/Guardian email cannot be left blank')
+        parser.add_argument('spgphone', type = str, required = True, help = 'Parent/Guardian email cannot be left blank')
 
         data = parser.parse_args()
 
@@ -35,7 +35,7 @@ class StudentRegister(Resource):
                                                             {data['syear']},
                                                             '{data['semail']}',
                                                             '{data['sphone']}',
-                                                            {data['spgemail']},
+                                                            '{data['spgname']}',
                                                             '{data['spgphone']}'
                                                             )"""
                                                             )
