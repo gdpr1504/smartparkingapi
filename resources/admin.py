@@ -26,8 +26,7 @@ class AdminRegister(Resource):
 
         try:
             bcrypt = Bcrypt()
-            apassword_hash = bcrypt.generate_password_hash(data['apassword'])
-            print(apassword_hash)
+            apassword_hash = bcrypt.generate_password_hash(data['apassword']).decode('utf-8')
         except:
             return {"message":"Password hash not generated"},500
 
@@ -35,7 +34,7 @@ class AdminRegister(Resource):
             try:
                 query(f"""INSERT INTO ADMINS VALUES (
                                                                 '{data['ausername']}',
-                                                                "{apassword_hash}",
+                                                                '{apassword_hash}',
                                                                 '{data['aname']}',
                                                                 '{data['adept']}',
                                                                 '{data['aemail']}',
@@ -58,3 +57,32 @@ class AdminRegister(Resource):
                 return {"message":"Error inserting into ADMINS"},500
         
         return {"message":"Admin successfully registered"},201
+
+class AdminUser():
+    def __init__(self, ausername, apassword):
+        self.ausername = ausername
+        self.apassword = apassword
+
+    @classmethod
+    def getAdminUserByAusername(cls, ausername):
+        result = query(f"""SELECT ausername, apassword FROM ADMINS WHERE ausername = '{ausername}'""",return_json=False)
+        if len(result)>0: return AdminUser(result[0]['ausername'], result[0]['apassword'])
+        return None
+
+
+class AdminLogin(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('ausername', type = str, required = True, help = 'username cannot be left blank')
+        parser.add_argument('apassword', type = str, required = True, help = 'password cannot be left blank')
+        data = parser.parse_args()
+        bcrypt = Bcrypt()
+            
+        try:
+            adminuser = AdminUser.getAdminUserByAusername(data['ausername'])
+            if adminuser and bcrypt.check_password_hash(adminuser.apassword, data['apassword']) :
+                access_token = create_access_token(identity=adminuser.ausername, expires_delta = False)
+                return {'access_token':access_token},200
+            return {"message":"Invalid credentials!"},401
+        except:
+            return {"message":"Error while logging in"},500

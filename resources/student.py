@@ -29,15 +29,14 @@ class StudentRegister(Resource):
 
         try:
             bcrypt = Bcrypt()
-            spassword_hash = bcrypt.generate_password_hash(data['spassword'])
-            print(spassword_hash)
+            spassword_hash = bcrypt.generate_password_hash(data['spassword']).decode('utf-8')
         except:
             return {"message":"Password hash not generated"},500
 
         try:
             query(f"""INSERT INTO STUDENTS VALUES (
                                                             '{data['srollno']}',
-                                                            "{spassword_hash}",
+                                                            '{spassword_hash}',
                                                             '{data['sname']}',
                                                             '{data['sdept']}',
                                                             {data['syear']},
@@ -51,3 +50,32 @@ class StudentRegister(Resource):
             return {"message":"Error inserting into STUDENTS"},500
         
         return {"message":"Student successfully registered"},201
+
+class StudentUser():
+    def __init__(self, srollno, spassword):
+        self.srollno = srollno
+        self.spassword = spassword
+
+    @classmethod
+    def getStudentUserBySrollno(cls, srollno):
+        result = query(f"""SELECT srollno, spassword FROM STUDENTS WHERE srollno = '{srollno}'""",return_json=False)
+        if len(result)>0: return StudentUser(result[0]['srollno'], result[0]['spassword'])
+        return None
+
+
+class StudentLogin(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
+        parser.add_argument('spassword', type = str, required = True, help = 'password cannot be left blank')
+        data = parser.parse_args()
+        bcrypt = Bcrypt()
+            
+        try:
+            studentuser = StudentUser.getStudentUserBySrollno(data['srollno'])
+            if studentuser and bcrypt.check_password_hash(studentuser.spassword, data['spassword']) :
+                access_token = create_access_token(identity=studentuser.srollno, expires_delta = False)
+                return {'access_token':access_token},200
+            return {"message":"Invalid credentials!"},401
+        except:
+            return {"message":"Error while logging in"},500
