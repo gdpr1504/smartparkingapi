@@ -66,14 +66,16 @@ class AdminRegister(Resource):
         return {"message":"Admin successfully registered"},201
 
 class AdminUser():
-    def __init__(self, ausername, apassword):
+    def __init__(self, ausername, apassword, aname, adept):
         self.ausername = ausername
         self.apassword = apassword
+        self.aname = aname
+        self.adept = adept
 
     @classmethod
     def getAdminUserByAusername(cls, ausername):
-        result = query(f"""SELECT ausername, apassword FROM ADMINS WHERE ausername = '{ausername}'""",return_json=False)
-        if len(result)>0: return AdminUser(result[0]['ausername'], result[0]['apassword'])
+        result = query(f"""SELECT ausername, apassword, aname, adept FROM ADMINS WHERE ausername = '{ausername}'""",return_json=False)
+        if len(result)>0: return AdminUser(result[0]['ausername'], result[0]['apassword'], result[0]['aname'], result[0]['adept'])
         return None
 
 
@@ -89,7 +91,9 @@ class AdminLogin(Resource):
             adminuser = AdminUser.getAdminUserByAusername(data['ausername'])
             if adminuser and bcrypt.check_password_hash(adminuser.apassword, data['apassword']) :
                 access_token = create_access_token(identity=adminuser.ausername, expires_delta = False)
-                return {'access_token':access_token},200
+                return {    "aname":adminuser.aname,
+                            "adept":adminuser.adept,
+                            "access_token":access_token},200
             return {"message":"Invalid credentials!"},401
         except:
             return {"message":"Error while logging in"},500

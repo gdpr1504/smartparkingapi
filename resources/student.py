@@ -52,14 +52,17 @@ class StudentRegister(Resource):
         return {"message":"Student successfully registered"},201
 
 class StudentUser():
-    def __init__(self, srollno, spassword):
+    def __init__(self, srollno, spassword, sname, sdept, syear):
         self.srollno = srollno
         self.spassword = spassword
+        self.sname = sname
+        self.sdept = sdept
+        self.syear = syear
 
     @classmethod
     def getStudentUserBySrollno(cls, srollno):
-        result = query(f"""SELECT srollno, spassword FROM STUDENTS WHERE srollno = '{srollno}'""",return_json=False)
-        if len(result)>0: return StudentUser(result[0]['srollno'], result[0]['spassword'])
+        result = query(f"""SELECT srollno, spassword, sname, sdept, syear FROM STUDENTS WHERE srollno = '{srollno}'""",return_json=False)
+        if len(result)>0: return StudentUser(result[0]['srollno'], result[0]['spassword'], result[0]['sname'], result[0]['sdept'], result[0]['syear'])
         return None
 
 
@@ -75,7 +78,11 @@ class StudentLogin(Resource):
             studentuser = StudentUser.getStudentUserBySrollno(data['srollno'])
             if studentuser and bcrypt.check_password_hash(studentuser.spassword, data['spassword']) :
                 access_token = create_access_token(identity=studentuser.srollno, expires_delta = False)
-                return {'access_token':access_token},200
+                return {    "sname":studentuser.sname,
+                            "sdept":studentuser.sdept,
+                            "syear":studentuser.syear,
+                            "access_token":access_token
+                        },200
             return {"message":"Invalid credentials!"},401
         except:
             return {"message":"Error while logging in"},500
