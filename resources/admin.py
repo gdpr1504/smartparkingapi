@@ -18,11 +18,18 @@ class AdminRegister(Resource):
         data = parser.parse_args()
 
         try:
-            isAlreadyPresent = query(f"""SELECT * FROM ADMINS WHERE ausername = '{data['ausername']}'""", return_json = False)
-            if len(isAlreadyPresent) > 0:
+            isUsernameAlreadyPresent = query(f"""SELECT * FROM ADMINS WHERE ausername = '{data['ausername']}'""", return_json = False)
+            if len(isUsernameAlreadyPresent) > 0:
                 return {"message":"Admin with given username already exists"},400
         except:
-            return {"message":"Error inserting into ADMINS1"},500
+            return {"message":"Error inserting into ADMINS"},500
+
+        try:
+            isDeptAlreadyPresent = query(f"""SELECT * FROM ADMINS WHERE adept = '{data['adept']}'""", return_json = False)
+            if len(isDeptAlreadyPresent) > 0:
+                return {"message":"Admin of given dept already exists"},400
+        except:
+            return {"message":"Error inserting into ADMINS"},500
 
         try:
             bcrypt = Bcrypt()
