@@ -78,7 +78,8 @@ class StudentLogin(Resource):
             studentuser = StudentUser.getStudentUserBySrollno(data['srollno'])
             if studentuser and bcrypt.check_password_hash(studentuser.spassword, data['spassword']) :
                 access_token = create_access_token(identity=studentuser.srollno, expires_delta = False)
-                return {    "sname":studentuser.sname,
+                return {    "srollno":studentuser.srollno,
+                            "sname":studentuser.sname,
                             "sdept":studentuser.sdept,
                             "syear":studentuser.syear,
                             "access_token":access_token

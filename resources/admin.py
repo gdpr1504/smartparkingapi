@@ -91,7 +91,8 @@ class AdminLogin(Resource):
             adminuser = AdminUser.getAdminUserByAusername(data['ausername'])
             if adminuser and bcrypt.check_password_hash(adminuser.apassword, data['apassword']) :
                 access_token = create_access_token(identity=adminuser.ausername, expires_delta = False)
-                return {    "aname":adminuser.aname,
+                return {    "ausername":adminuser.ausername,
+                            "aname":adminuser.aname,
                             "adept":adminuser.adept,
                             "access_token":access_token},200
             return {"message":"Invalid credentials!"},401
