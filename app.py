@@ -1,8 +1,9 @@
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from resources.student import StudentRegister, StudentLogin
+from resources.student import StudentRegister, StudentLogin, EditStudentdetails
 from resources.admin import AdminRegister, AdminLogin
+from resources.outpass import OutpassApplication, PendingOutpasses
 
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS']=True
@@ -28,6 +29,9 @@ api.add_resource(StudentRegister, '/studentregister')
 api.add_resource(AdminRegister, '/adminregister')
 api.add_resource(StudentLogin, '/studentlogin')
 api.add_resource(AdminLogin, '/adminlogin')
+api.add_resource(OutpassApplication, '/outpassapplication')
+api.add_resource(PendingOutpasses, '/outpassrequests')
+api.add_resource(EditStudentdetails, '/editstudentdetails')
 
 if __name__ == '__main__':
     app.run()

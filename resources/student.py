@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from db import query
 from flask_jwt_extended import create_access_token, jwt_required
-from werkzeug.security import safe_str_cmp
 from flask_bcrypt import Bcrypt
 
 class StudentRegister(Resource):
@@ -87,3 +86,51 @@ class StudentLogin(Resource):
             return {"message":"Invalid credentials!"},401
         except:
             return {"message":"Error while logging in"},500
+
+
+class EditStudentdetails(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+
+        parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
+        parser.add_argument('soldpassword', type = str, required = True, help = 'old password cannot be left blank')
+        parser.add_argument('snewpassword', type = str, required = True, help = 'new password cannot be left blank')
+        parser.add_argument('sname', type = str, required = True, help = 'name cannot be left blank')
+        parser.add_argument('sdept', type = str, required = True, help = 'dept cannot be left blank')
+        parser.add_argument('syear', type = int, required = True, help = 'year cannot be left blank')
+        parser.add_argument('semail', type = str, required = True, help = 'email cannot be left blank')
+        parser.add_argument('sphone', type = str, required = True, help = 'phone no cannot be left blank')
+        parser.add_argument('spgname', type = str, required = True, help = 'Parent/Guardian name cannot be left blank')
+        parser.add_argument('spgphone', type = str, required = True, help = 'Parent/Guardian email cannot be left blank')
+
+        data = parser.parse_args()
+
+        try:
+            bcrypt = Bcrypt()
+            studentuser = StudentUser.getStudentUserBySrollno(data['srollno'])
+            if not(studentuser and bcrypt.check_password_hash(studentuser.spassword, data['soldpassword'])):
+                return {"message":"Wrong password"}
+        except:
+            return {"message":"Error in editing details"},500
+
+        try:
+            spassword_hash = bcrypt.generate_password_hash(data['snewpassword']).decode('utf-8')
+        except:
+            return {"message":"Password hash not generated"},500
+
+        try:
+            x=query(f"""SELECT * FROM STUDENTS WHERE srollno = '{data["srollno"]}'""",return_json=False)
+            if len(x)>0:
+                query(f"""update STUDENTS set
+                                                spassword='{spassword_hash}',
+                                                sname='{data['sname']}',
+                                                sdept='{data['sdept']}',
+                                                syear={data['syear']},
+                                                semail='{data['semail']}',
+                                                sphone='{data['sphone']}',
+                                                spgname='{data['spgname']}',
+                                                spgphone='{data['spgphone']}'""")
+                return {"message" : "Details are edited successfully!"},200
+            return {"message" : "Srollno doesn't exist"},400
+        except:
+                return{"message" : "Error in editing details"},500
