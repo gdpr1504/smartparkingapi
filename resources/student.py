@@ -11,7 +11,7 @@ class StudentRegister(Resource):
         parser.add_argument('spassword', type = str, required = True, help = 'password cannot be left blank')
         parser.add_argument('sname', type = str, required = True, help = 'name cannot be left blank')
         parser.add_argument('sdept', type = str, required = True, help = 'dept cannot be left blank')
-        parser.add_argument('syear', type = int, required = True, help = 'year cannot be left blank')
+        parser.add_argument('syear', type = str, required = True, help = 'year cannot be left blank')
         parser.add_argument('semail', type = str, required = True, help = 'email cannot be left blank')
         parser.add_argument('sphone', type = str, required = True, help = 'phone no cannot be left blank')
         parser.add_argument('spgname', type = str, required = True, help = 'Parent/Guardian name cannot be left blank')
@@ -38,7 +38,7 @@ class StudentRegister(Resource):
                                                             '{spassword_hash}',
                                                             '{data['sname']}',
                                                             '{data['sdept']}',
-                                                            {data['syear']},
+                                                            '{data['syear']}',
                                                             '{data['semail']}',
                                                             '{data['sphone']}',
                                                             '{data['spgname']}',
@@ -97,7 +97,7 @@ class EditStudentdetails(Resource):
         parser.add_argument('snewpassword', type = str, required = True, help = 'new password cannot be left blank')
         parser.add_argument('sname', type = str, required = True, help = 'name cannot be left blank')
         parser.add_argument('sdept', type = str, required = True, help = 'dept cannot be left blank')
-        parser.add_argument('syear', type = int, required = True, help = 'year cannot be left blank')
+        parser.add_argument('syear', type = str, required = True, help = 'year cannot be left blank')
         parser.add_argument('semail', type = str, required = True, help = 'email cannot be left blank')
         parser.add_argument('sphone', type = str, required = True, help = 'phone no cannot be left blank')
         parser.add_argument('spgname', type = str, required = True, help = 'Parent/Guardian name cannot be left blank')
@@ -125,7 +125,7 @@ class EditStudentdetails(Resource):
                                                 spassword='{spassword_hash}',
                                                 sname='{data['sname']}',
                                                 sdept='{data['sdept']}',
-                                                syear={data['syear']},
+                                                syear='{data['syear']}',
                                                 semail='{data['semail']}',
                                                 sphone='{data['sphone']}',
                                                 spgname='{data['spgname']}',
