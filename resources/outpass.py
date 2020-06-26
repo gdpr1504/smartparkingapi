@@ -14,9 +14,9 @@ class OutpassApplication(Resource):
         parser.add_argument('odesc', type = str, required = True, help = 'description cannot be left blank')
 
         data = parser.parse_args()
-
+    
         try:
-            isAlreadyPresent = query(f"""SELECT * FROM PASSES WHERE orollno = '{data['orollno']}' AND odate = current_date()""", return_json = False)
+            isAlreadyPresent = query(f"""SELECT * FROM PASSES WHERE orollno = '{data['orollno']}' AND odate = '{data['odate']}'""", return_json = False)
             if len(isAlreadyPresent) > 0:
                 return {"message":"Student has already applied for an outpass on the given date"},400
         except:
@@ -45,6 +45,25 @@ class PendingOutpasses(Resource):
         data = parser.parse_args()
 
         try:
-            return query(f"""SELECT srollno, sname, syear FROM STUDENTS INNER JOIN PASSES ON srollno = orollno WHERE ostatus = 'pending' AND sdept = '{data['adept']}'""", return_json=False),200
+            return query(f"""SELECT oid, srollno, sname, syear FROM STUDENTS INNER JOIN PASSES ON srollno = orollno WHERE ostatus = 'pending' AND sdept = '{data['adept']}'""", return_json=False),200
         except:
             return {"message":"Error in retrieving pending outpasses"},500
+
+class SetOutpassStatus(Resource):
+    @jwt_required
+    def post(self):
+        try:
+            parser = reqparse.RequestParser()
+
+            parser.add_argument('oid', type = int, required = True, help = 'oid cannot be left blank')
+            parser.add_argument('ostatus', type = str, required = True, help = 'status cannot be left blank')
+
+            data = parser.parse_args()
+        except:
+            return {"message":"error in parsing data"},400
+
+        try:
+            query(f"""UPDATE PASSES SET ostatus = '{data['ostatus']}' WHERE oid = '{data['oid']}'""")
+        except:
+            return {"message":"Error in setting outpass status"},500
+        return {"message":"Outpass status set successfully"},200

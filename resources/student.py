@@ -33,35 +33,39 @@ class StudentRegister(Resource):
             return {"message":"Password hash not generated"},500
 
         try:
-            query(f"""INSERT INTO STUDENTS VALUES (
-                                                            '{data['srollno']}',
-                                                            '{spassword_hash}',
-                                                            '{data['sname']}',
-                                                            '{data['sdept']}',
-                                                            '{data['syear']}',
-                                                            '{data['semail']}',
-                                                            '{data['sphone']}',
-                                                            '{data['spgname']}',
-                                                            '{data['spgphone']}'
-                                                            )"""
-                                                            )
+            query(f"""INSERT INTO STUDENTS (srollno, spassword, sname, sdept, syear, semail, sphone, spgname, spgphone) VALUES (
+                                                                                                                                '{data['srollno']}',
+                                                                                                                                '{spassword_hash}',
+                                                                                                                                '{data['sname']}',
+                                                                                                                                '{data['sdept']}',
+                                                                                                                                '{data['syear']}',
+                                                                                                                                '{data['semail']}',
+                                                                                                                                '{data['sphone']}',
+                                                                                                                                '{data['spgname']}',
+                                                                                                                                '{data['spgphone']}'
+                                                                                                                                )"""
+                                                                                                                                )
         except:
             return {"message":"Error inserting into STUDENTS"},500
         
         return {"message":"Student successfully registered"},201
 
 class StudentUser():
-    def __init__(self, srollno, spassword, sname, sdept, syear):
+    def __init__(self, srollno, spassword, sname, sdept, syear, semail, sphone, spgname, spgphone):
         self.srollno = srollno
         self.spassword = spassword
         self.sname = sname
         self.sdept = sdept
         self.syear = syear
+        self.semail = semail
+        self.sphone = sphone
+        self.spgname = spgname
+        self.spgphone = spgphone
 
     @classmethod
     def getStudentUserBySrollno(cls, srollno):
-        result = query(f"""SELECT srollno, spassword, sname, sdept, syear FROM STUDENTS WHERE srollno = '{srollno}'""",return_json=False)
-        if len(result)>0: return StudentUser(result[0]['srollno'], result[0]['spassword'], result[0]['sname'], result[0]['sdept'], result[0]['syear'])
+        result = query(f"""SELECT * FROM STUDENTS WHERE srollno = '{srollno}'""",return_json=False)
+        if len(result)>0: return StudentUser(result[0]['srollno'], result[0]['spassword'], result[0]['sname'], result[0]['sdept'], result[0]['syear'], result[0]['semail'], result[0]['sphone'], result[0]['spgname'], result[0]['spgphone'])
         return None
 
 
@@ -89,21 +93,26 @@ class StudentLogin(Resource):
 
 
 class EditStudentdetails(Resource):
+    @jwt_required
     def post(self):
-        parser = reqparse.RequestParser()
 
-        parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
-        parser.add_argument('soldpassword', type = str, required = True, help = 'old password cannot be left blank')
-        parser.add_argument('snewpassword', type = str, required = True, help = 'new password cannot be left blank')
-        parser.add_argument('sname', type = str, required = True, help = 'name cannot be left blank')
-        parser.add_argument('sdept', type = str, required = True, help = 'dept cannot be left blank')
-        parser.add_argument('syear', type = str, required = True, help = 'year cannot be left blank')
-        parser.add_argument('semail', type = str, required = True, help = 'email cannot be left blank')
-        parser.add_argument('sphone', type = str, required = True, help = 'phone no cannot be left blank')
-        parser.add_argument('spgname', type = str, required = True, help = 'Parent/Guardian name cannot be left blank')
-        parser.add_argument('spgphone', type = str, required = True, help = 'Parent/Guardian email cannot be left blank')
+        try:
+            parser = reqparse.RequestParser()
 
-        data = parser.parse_args()
+            parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
+            parser.add_argument('soldpassword', type = str, required = True, help = 'old password cannot be left blank')
+            parser.add_argument('snewpassword', type = str)
+            parser.add_argument('sname', type = str)
+            parser.add_argument('sdept', type = str)
+            parser.add_argument('syear', type = str)
+            parser.add_argument('semail', type = str)
+            parser.add_argument('sphone', type = str)
+            parser.add_argument('spgname', type = str)
+            parser.add_argument('spgphone', type = str)
+
+            data = parser.parse_args()
+        except:
+            return {"message":"error in parsing data"},400
 
         try:
             bcrypt = Bcrypt()
@@ -113,15 +122,33 @@ class EditStudentdetails(Resource):
         except:
             return {"message":"Error in editing details"},500
 
+
         try:
-            spassword_hash = bcrypt.generate_password_hash(data['snewpassword']).decode('utf-8')
+            if data['snewpassword'] == None:
+                data['snewpassword'] = studentuser.spassword
+            else:
+                spassword_hash = bcrypt.generate_password_hash(data['snewpassword']).decode('utf-8')
+            if data['sname'] == None:
+                data['sname'] = studentuser.sname
+            if data['sdept'] == None:
+                data['sdept'] = studentuser.sdept
+            if data['syear'] == None:
+                data['syear'] = studentuser.syear
+            if data['semail'] == None:
+                data['semail'] = studentuser.semail
+            if data['sphone'] == None:
+                data['sphone'] = studentuser.sphone
+            if data['spgname'] == None:
+                data['spgname'] = studentuser.spgname
+            if data['spgphone'] == None:
+                data['spgphone'] = studentuser.spgphone
         except:
-            return {"message":"Password hash not generated"},500
+            return {"message":"Error in editing details"},500
 
         try:
             x=query(f"""SELECT * FROM STUDENTS WHERE srollno = '{data["srollno"]}'""",return_json=False)
             if len(x)>0:
-                query(f"""update STUDENTS set
+                query(f"""UPDATE STUDENTS SET
                                                 spassword='{spassword_hash}',
                                                 sname='{data['sname']}',
                                                 sdept='{data['sdept']}',
@@ -129,7 +156,8 @@ class EditStudentdetails(Resource):
                                                 semail='{data['semail']}',
                                                 sphone='{data['sphone']}',
                                                 spgname='{data['spgname']}',
-                                                spgphone='{data['spgphone']}'""")
+                                                spgphone='{data['spgphone']}'
+                        WHERE srollno = '{data['srollno']}'""")
                 return {"message" : "Details are edited successfully!"},200
             return {"message" : "Srollno doesn't exist"},400
         except:
