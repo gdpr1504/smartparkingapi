@@ -38,7 +38,7 @@ class AdminRegister(Resource):
             return {"message":"Password hash not generated"},500
 
         try:
-            query(f"""INSERT INTO ADMINS (ausername, apassword, aname, aemail, aphone) VALUES (
+            query(f"""INSERT INTO ADMINS VALUES (
                                                             '{data['ausername']}',
                                                             '{apassword_hash}',
                                                             '{data['aname']}',
