@@ -113,14 +113,10 @@ class EditAdmindetails(Resource):
             if not(adminuser and bcrypt.check_password_hash(adminuser.apassword, data['aoldpassword'])):
                 return {"message":"Wrong password"}
         except:
-            return {"message":"Error in editing details3"},500
+            return {"message":"Error in editing details"},500
 
 
         try:
-            if data['anewpassword'] == None:
-                data['anewpassword'] = adminuser.apassword
-            else:
-                apassword_hash = bcrypt.generate_password_hash(data['anewpassword']).decode('utf-8')
             if data['aname'] == None:
                 data['aname'] = adminuser.aname
             if data['adept'] == None:
@@ -129,10 +125,21 @@ class EditAdmindetails(Resource):
                 data['aemail'] = adminuser.aemail
             if data['aphone'] == None:
                 data['aphone'] = adminuser.aphone
-        except:
-            return {"message":"Error in editing details2"},500
+            if data['anewpassword'] == None:
+                x=query(f"""SELECT * FROM ADMINS WHERE ausername = '{data["ausername"]}'""",return_json=False)
+                if len(x)>0:
+                    query(f"""UPDATE ADMINS SET
+                                                    aname='{data['aname']}',
+                                                    adept='{data['adept']}',
+                                                    aemail='{data['aemail']}',
+                                                    aphone='{data['aphone']}'
+                            WHERE ausername = '{data['ausername']}'""")
+                    return {"message" : "Details are edited successfully!"},200
+                return {"message" : "Srollno doesn't exist"},400
+            else:
+                apassword_hash = bcrypt.generate_password_hash(data['anewpassword']).decode('utf-8')
 
-        try:
+
             x=query(f"""SELECT * FROM ADMINS WHERE ausername = '{data["ausername"]}'""",return_json=False)
             if len(x)>0:
                 query(f"""UPDATE ADMINS SET
@@ -144,8 +151,10 @@ class EditAdmindetails(Resource):
                         WHERE ausername = '{data['ausername']}'""")
                 return {"message" : "Details are edited successfully!"},200
             return {"message" : "Srollno doesn't exist"},400
+            
         except:
-                return{"message" : "Error in editing details1"},500
+            return {"message":"Error in editing details"},500
+
 
 class GetPendingNoOfPasses(Resource):
     @jwt_required
