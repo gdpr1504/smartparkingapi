@@ -32,8 +32,16 @@ class OutpassApplication(Resource):
                                                             )
         except:
             return {"message":"Error in outpass application"},500
+
+        try:
+            result = query(f"""SELECT oid FROM PASSES WHERE orollno = '{data['srollno']}' AND odate = '{data['odate']}' AND otime = '{data['otime']}' AND odesc = '{data['odesc']}'""", return_json=False)
+            if len(result)>0:
+                oid = result[0]['oid']
+        except:
+            return {"message":"Error in getting oid"},500
         
-        return {"message":"Outpass application successfull"},201
+        return {"message":"Outpass application successfull",
+                "oid":oid},201
 
 class PendingOutpasses(Resource):
     @jwt_required
