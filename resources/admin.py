@@ -189,3 +189,18 @@ class GetPassesHistory(Resource):
             return query(f"""SELECT ostatus, odate FROM PASSES WHERE orollno = '{data["srollno"]}'""")
         except:
             return {"message":"Error while fetching dates"},500
+
+
+class Studentdetails(Resource):
+    @jwt_required
+    def get(self):
+        parser = reqparse.RequestParser()
+
+        parser.add_argument('srollno', type = str, required = True, help = 'srollno cannot be left blank')
+
+        data = parser.parse_args()
+
+        try:
+            return query(f"""SELECT sname, sdept, syear, semail, sphone, spgname, spgphone FROM STUDENTS WHERE srollno = '{data['srollno']}'""", return_json=False),200
+        except:
+            return {"message":"srollno doesn't exist"},500
