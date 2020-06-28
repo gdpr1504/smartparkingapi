@@ -16,7 +16,7 @@ class OutpassApplication(Resource):
         data = parser.parse_args()
     
         try:
-            isAlreadyPresent = query(f"""SELECT * FROM PASSES WHERE orollno = '{data['orollno']}' AND odate = '{data['odate']}'""", return_json = False)
+            isAlreadyPresent = query(f"""SELECT * FROM PASSES WHERE orollno = '{data['srollno']}' AND odate = '{data['odate']}'""", return_json = False)
             if len(isAlreadyPresent) > 0:
                 return {"message":"Student has already applied for an outpass on the given date"},400
         except:
@@ -24,7 +24,7 @@ class OutpassApplication(Resource):
 
         try:
             query(f"""INSERT INTO PASSES (orollno, odate, otime, odesc) VALUES (
-                                                            '{data['orollno']}',
+                                                            '{data['srollno']}',
                                                             '{data['odate']}',
                                                             '{data['otime']}',
                                                             '{data['odesc']}'
