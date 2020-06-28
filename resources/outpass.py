@@ -8,7 +8,7 @@ class OutpassApplication(Resource):
     def post(self):
         parser = reqparse.RequestParser()
 
-        parser.add_argument('orollno', type = str, required = True, help = 'roll no cannot be left blank')
+        parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
         parser.add_argument('odate', type = str, required = True, help = 'date cannot be left blank')
         parser.add_argument('otime', type = str, required = True, help = 'time cannot be left blank')
         parser.add_argument('odesc', type = str, required = True, help = 'description cannot be left blank')
