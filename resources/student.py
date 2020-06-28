@@ -176,3 +176,17 @@ class EditStudentdetails(Resource):
 
         except:
             return {"message":"Error in editing details"},500
+
+class Outpassstatus(Resource):
+    @jwt_required
+    def get(self):
+        parser = reqparse.RequestParser()
+
+        parser.add_argument('oid', type = int, required = True, help = 'oid cannot be left blank')
+
+        data = parser.parse_args()
+
+        try:
+            return query(f"""SELECT ostatus FROM PASSES WHERE oid = '{data['oid']}'""", return_json=False),200
+        except:
+            return {"message":"oid doesn't exist"},500
