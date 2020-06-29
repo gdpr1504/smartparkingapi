@@ -75,3 +75,14 @@ class SetOutpassStatus(Resource):
         except:
             return {"message":"Error in setting outpass status"},500
         return {"message":"Outpass status set successfully"},200
+
+class Outpasssdetails(Resource):
+    @jwt_required
+    def get(self):
+        parser = reqparse.RequestParser()
+
+        parser.add_argument('oid', type = int, required = True, help = 'oid cannot be left blank')
+
+        data = parser.parse_args()
+
+        return query(f"""SELECT oid, orollno, otime, odate, odesc, ostatus FROM PASSES WHERE oid = {data['oid']}"""),200

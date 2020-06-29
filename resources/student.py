@@ -190,3 +190,20 @@ class Outpassstatus(Resource):
             return query(f"""SELECT ostatus FROM PASSES WHERE oid = '{data['oid']}'""", return_json=False),200
         except:
             return {"message":"oid doesn't exist"},500
+
+class GetStudentHistory(Resource):
+    @jwt_required
+    def get(self):
+        try:
+            parser = reqparse.RequestParser()
+
+            parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
+
+            data = parser.parse_args()
+        except:
+            return {"message":"error in parsing data"},400
+
+        try:
+            return query(f"""SELECT odate, odesc, ostatus FROM PASSES WHERE orollno = '{data["srollno"]}'""")
+        except:
+            return {"message":"Error while fetching data"},500
