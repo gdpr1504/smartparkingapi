@@ -204,3 +204,22 @@ class Studentdetails(Resource):
             return query(f"""SELECT sname, sdept, syear, semail, sphone, spgname, spgphone FROM STUDENTS WHERE srollno = '{data['srollno']}'""", return_json=False),200
         except:
             return {"message":"srollno doesn't exist"},500
+
+class SetOutpassesleft(Resource):
+    @jwt_required
+    def post(self):
+        try:
+            parser = reqparse.RequestParser()
+
+            parser.add_argument('srollno', type = str, required = True, help = 'srollno cannot be left blank')
+            parser.add_argument('value', type = int, required = True, help = 'value cannot be left blank')
+
+            data = parser.parse_args()
+        except:
+            return {"message":"error in parsing data"},400
+
+        try:
+            query(f"""UPDATE STUDENTS SET passesleft = '{data['value']}' WHERE srollno = '{data['srollno']}'""")
+        except:
+            return {"message":"Error in setting passesleft"},500
+        return {"message":"Passesleft set successfully"},200

@@ -85,4 +85,7 @@ class Outpasssdetails(Resource):
 
         data = parser.parse_args()
 
-        return query(f"""SELECT oid, orollno, otime, odate, odesc, ostatus FROM PASSES WHERE oid = {data['oid']}"""),200
+        try:
+            return query(f"""SELECT oid, orollno, odate, odesc, ostatus FROM PASSES WHERE oid = '{data['oid']}'""", return_json=False),200
+        except:
+            return {"message":"oid doesn't exist"},500

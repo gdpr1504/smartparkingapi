@@ -1,5 +1,6 @@
 from flask import jsonify
 from decimal import Decimal
+from datetime import date, time, datetime
 import pymysql
 
 def query(querystr, return_json=True):
@@ -23,6 +24,6 @@ def query(querystr, return_json=True):
 def encode(data):
     for row in data:
         for key, value in row.items():
-            if isinstance(value, Decimal):
+            if isinstance(value, (Decimal, datetime, date, time)):
                 row[key] = str(value)
     return data
