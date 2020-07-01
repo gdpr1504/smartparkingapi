@@ -57,7 +57,7 @@ class PendingOutpasses(Resource):
         data = parser.parse_args()
 
         try:
-            query(f"""UPDATE PASSES SET ostatus = 'rejected' WHERE odate < CURDATE()""")
+            query(f"""UPDATE PASSES SET ostatus = 'rejected' WHERE odate < CURDATE() AND ostatus = 'pending'""")
             return query(f"""SELECT oid, srollno, sname, syear FROM STUDENTS INNER JOIN PASSES ON srollno = orollno WHERE ostatus = 'pending' AND sdept = '{data['adept']}'""", return_json=False),200
         except:
             return {"message":"Error in retrieving pending outpasses"},500
