@@ -16,7 +16,11 @@ class OutpassApplication(Resource):
         data = parser.parse_args()
     
         try:
-            isAlreadyPresent = query(f"""SELECT * FROM PASSES WHERE orollno = '{data['srollno']}' AND odate = '{data['odate']}'""", return_json = False)
+            isapplicable = query(f"""SELECT passesleft FROM STUDENTS WHERE srollno = '{data['srollno']}' AND passesleft > 0""", return_json=False)
+            if len(isapplicable)<1:
+                return {"message":"Maximum no of outpasses applied"},400
+
+            isAlreadyPresent = query(f"""SELECT * FROM PASSES WHERE orollno = '{data['srollno']}' AND odate = '{data['odate']}' AND ostatus not in ('rejected','come to cabin')""", return_json = False)
             if len(isAlreadyPresent) > 0:
                 return {"message":"Student has already applied for an outpass on the given date"},400
         except:
@@ -34,7 +38,7 @@ class OutpassApplication(Resource):
             return {"message":"Error in outpass application"},500
 
         try:
-            result = query(f"""SELECT oid FROM PASSES WHERE orollno = '{data['srollno']}' AND odate = '{data['odate']}' AND otime = '{data['otime']}' AND odesc = '{data['odesc']}'""", return_json=False)
+            result = query(f"""SELECT oid FROM PASSES order by oid desc limit 1""", return_json=False)
             if len(result)>0:
                 oid = result[0]['oid']
         except:
@@ -53,6 +57,7 @@ class PendingOutpasses(Resource):
         data = parser.parse_args()
 
         try:
+            query(f"""UPDATE PASSES SET ostatus = 'rejected' WHERE odate < CURDATE()""")
             return query(f"""SELECT oid, srollno, sname, syear FROM STUDENTS INNER JOIN PASSES ON srollno = orollno WHERE ostatus = 'pending' AND sdept = '{data['adept']}'""", return_json=False),200
         except:
             return {"message":"Error in retrieving pending outpasses"},500
