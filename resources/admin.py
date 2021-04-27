@@ -61,7 +61,7 @@ class AdminLogin(Resource):
             
         try:
             adminuser = AdminUser.getAdminUserByAusername(data['email'])
-            if adminuser and bcrypt.check_password_hash(adminuser.password, data['pass']) :
+            if adminuser and (adminuser.password==data['pass']) :
                 access_token = create_access_token(identity=adminuser.email, expires_delta = False)
                 return {    "email":adminuser.email,
                             "fullname":adminuser.fullname,
