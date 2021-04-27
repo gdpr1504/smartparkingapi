@@ -39,36 +39,32 @@ class AdminRegister(Resource):
         return {"message":"User successfully registered"},201
 
 class AdminUser():
-    def __init__(self, ausername, apassword, aname, adept, aemail, aphone):
-        self.ausername = ausername
-        self.apassword = apassword
-        self.aname = aname
-        self.adept = adept
-        self.aemail = aemail
-        self.aphone = aphone
+    def __init__(self, fullname,email,password):
+        self.fullname = fullname
+        self.password = password
+        self.email = email
 
     @classmethod
-    def getAdminUserByAusername(cls, ausername):
-        result = query(f"""SELECT * FROM ADMINS WHERE ausername = '{ausername}'""",return_json=False)
-        if len(result)>0: return AdminUser(result[0]['ausername'], result[0]['apassword'], result[0]['aname'], result[0]['adept'], result[0]['aemail'], result[0]['aphone'])
+    def getAdminUserByAusername(cls, email):
+        result = query(f"""SELECT * FROM users WHERE email = '{email}'""",return_json=False)
+        if len(result)>0: return AdminUser(result[0]['fullname'], result[0]['email'],result[0]['pass'])
         return None
 
 
 class AdminLogin(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('ausername', type = str, required = True, help = 'username cannot be left blank')
-        parser.add_argument('apassword', type = str, required = True, help = 'password cannot be left blank')
+        parser.add_argument('email', type = str, required = True, help = 'username cannot be left blank')
+        parser.add_argument('pass', type = str, required = True, help = 'password cannot be left blank')
         data = parser.parse_args()
         bcrypt = Bcrypt()
             
         try:
-            adminuser = AdminUser.getAdminUserByAusername(data['ausername'])
-            if adminuser and bcrypt.check_password_hash(adminuser.apassword, data['apassword']) :
-                access_token = create_access_token(identity=adminuser.ausername, expires_delta = False)
-                return {    "ausername":adminuser.ausername,
-                            "aname":adminuser.aname,
-                            "adept":adminuser.adept,
+            adminuser = AdminUser.getAdminUserByAusername(data['email'])
+            if adminuser and bcrypt.check_password_hash(adminuser.password, data['pass']) :
+                access_token = create_access_token(identity=adminuser.email, expires_delta = False)
+                return {    "email":adminuser.email,
+                            "fullname":adminuser.fullname,
                             "access_token":access_token},200
             return {"message":"Invalid credentials!"},401
         except:

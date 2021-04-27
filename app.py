@@ -26,9 +26,9 @@ def invalid_token_callback(error):
     }), 401
 
 api.add_resource(StudentRegister, '/studentregister')
-api.add_resource(AdminRegister, '/adminregister')
+api.add_resource(AdminRegister, '/userregister')
 api.add_resource(StudentLogin, '/studentlogin')
-api.add_resource(AdminLogin, '/adminlogin')
+api.add_resource(AdminLogin, '/userlogin')
 api.add_resource(OutpassApplication, '/outpassapplication')
 api.add_resource(PendingOutpasses, '/outpassrequests')
 api.add_resource(EditStudentdetails, '/editstudentdetails')
