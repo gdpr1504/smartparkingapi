@@ -18,8 +18,6 @@ class AdminRegister(Resource):
             isUsernameAlreadyPresent = query(f"""SELECT * FROM USERS WHERE email = '{data['email']}'""", return_json = False)
             if len(isUsernameAlreadyPresent) > 0:
                 return {"message":"User with given email already exists"},400
-        except:
-            return {"message":"Error inserting into USERS"},500
 
         try:
             bcrypt = Bcrypt()
