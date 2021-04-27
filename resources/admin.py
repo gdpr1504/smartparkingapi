@@ -29,8 +29,8 @@ class AdminRegister(Resource):
 
         try:
             query(f"""INSERT INTO users VALUES ('{data['fullname']}',
-                                                            '{data['email']}',
-                                                            '{data['pass']}',
+                                               '{data['email']}',
+                                               '{data['pass']}'
                                                             )"""
                                                             )
         except:
