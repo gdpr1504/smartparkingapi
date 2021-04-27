@@ -47,7 +47,7 @@ class AdminUser():
     @classmethod
     def getAdminUserByAusername(cls, email):
         result = query(f"""SELECT * FROM users WHERE email = '{email}'""",return_json=False)
-        if len(result)>0: return AdminUser(result[0]['fullname'], result[0]['email'],result[0]['pass'])
+        if len(result)>0: return AdminUser(result[0]['fullname'], result[0]['email'],result[0]['password'])
         return None
 
 
