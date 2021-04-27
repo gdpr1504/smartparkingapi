@@ -39,7 +39,7 @@ class AdminRegister(Resource):
         
         return {"message":"User successfully registered"},201
 
-sclass AdminUser():
+class AdminUser():
     def __init__(self, ausername, apassword, aname, adept, aemail, aphone):
         self.ausername = ausername
         self.apassword = apassword
