@@ -7,7 +7,7 @@ from resources.outpass import OutpassApplication, PendingOutpasses, SetOutpassSt
 
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS']=True
-app.config['JWT_SECRET_KEY']='coscskillup'
+app.config['JWT_SECRET_KEY']='password'
 api = Api(app)
 jwt = JWTManager(app)
 

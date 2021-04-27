@@ -8,51 +8,38 @@ class AdminRegister(Resource):
     def post(self):
         parser = reqparse.RequestParser()
 
-        parser.add_argument('ausername', type = str, required = True, help = 'username cannot be left blank')
-        parser.add_argument('apassword', type = str, required = True, help = 'password cannot be left blank')
-        parser.add_argument('aname', type = str, required = True, help = 'name cannot be left blank')
-        parser.add_argument('adept', type = str, required = True, help = 'dept cannot be let blank')
-        parser.add_argument('aemail', type = str, required = True, help = 'year cannot be left blank')
-        parser.add_argument('aphone', type = str, required = True, help = 'email cannot be left blank')
+        parser.add_argument('fullname', type = str, required = True, help = 'username cannot be left blank')
+        parser.add_argument('email', type = str, required = True, help = 'year cannot be left blank')
+        parser.add_argument('pass', type = str, required = True, help = 'password cannot be left blank')
 
         data = parser.parse_args()
 
         try:
-            isUsernameAlreadyPresent = query(f"""SELECT * FROM ADMINS WHERE ausername = '{data['ausername']}'""", return_json = False)
+            isUsernameAlreadyPresent = query(f"""SELECT * FROM USERS WHERE email = '{data['email']}'""", return_json = False)
             if len(isUsernameAlreadyPresent) > 0:
-                return {"message":"Admin with given username already exists"},400
+                return {"message":"User with given email already exists"},400
         except:
-            return {"message":"Error inserting into ADMINS"},500
-
-        try:
-            isDeptAlreadyPresent = query(f"""SELECT * FROM ADMINS WHERE adept = '{data['adept']}'""", return_json = False)
-            if len(isDeptAlreadyPresent) > 0:
-                return {"message":"Admin of given dept already exists"},400
-        except:
-            return {"message":"Error inserting into ADMINS"},500
+            return {"message":"Error inserting into USERS"},500
 
         try:
             bcrypt = Bcrypt()
-            apassword_hash = bcrypt.generate_password_hash(data['apassword']).decode('utf-8')
+            apassword_hash = bcrypt.generate_password_hash(data['pass']).decode('utf-8')
         except:
             return {"message":"Password hash not generated"},500
 
         try:
-            query(f"""INSERT INTO ADMINS VALUES (
-                                                            '{data['ausername']}',
-                                                            '{apassword_hash}',
-                                                            '{data['aname']}',
-                                                            '{data['adept']}',
-                                                            '{data['aemail']}',
-                                                            '{data['aphone']}'
+            query(f"""INSERT INTO USERS VALUES (
+                                                            '{data['fullname']}',
+                                                            '{data['email']}',
+                                                            '{data['pass']}',
                                                             )"""
                                                             )
         except:
-            return {"message":"Error inserting into ADMINS"},500
+            return {"message":"Error inserting into User"},500
         
-        return {"message":"Admin successfully registered"},201
+        return {"message":"User successfully registered"},201
 
-class AdminUser():
+sclass AdminUser():
     def __init__(self, ausername, apassword, aname, adept, aemail, aphone):
         self.ausername = ausername
         self.apassword = apassword
