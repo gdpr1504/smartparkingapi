@@ -28,7 +28,7 @@ class AdminRegister(Resource):
             return {"message":"Password hash not generated"},500
 
         try:
-            query(f"""INSERT INTO users VALUES ('{data['fullname']}',
+            query(f"""INSERT INTO users(fullname,email,password) VALUES ('{data['fullname']}',
                                                '{data['email']}',
                                                '{data['pass']}'
                                                             )"""
