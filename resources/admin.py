@@ -39,15 +39,16 @@ class AdminRegister(Resource):
         return {"message":"User successfully registered"},201
 
 class AdminUser():
-    def __init__(self, fullname,email,password):
+    def __init__(self, fullname,email,password,uid):
         self.fullname = fullname
         self.password = password
         self.email = email
+        self.uid=uid
 
     @classmethod
     def getAdminUserByAusername(cls, email):
         result = query(f"""SELECT * FROM users WHERE email = '{email}'""",return_json=False)
-        if len(result)>0: return AdminUser(result[0]['fullname'], result[0]['email'],result[0]['password'])
+        if len(result)>0: return AdminUser(result[0]['fullname'], result[0]['email'],result[0]['password'],result[0]['uid'])
         return None
 
 
@@ -65,7 +66,8 @@ class AdminLogin(Resource):
                 access_token = create_access_token(identity=adminuser.email, expires_delta = False)
                 return {    "email":adminuser.email,
                             "fullname":adminuser.fullname,
-                            "access_token":access_token},200
+                            "access_token":access_token,
+                            "uid":adminuser.uid},200
             return {"message":"Invalid credentials!"},401
         except:
             return {"message":"Error while logging in"},500
