@@ -140,20 +140,11 @@ class EditAdmindetails(Resource):
             return {"message":"Error in editing details"},500
 
 
-class GetPendingNoOfPasses(Resource):
+class GetDistricts(Resource):
     @jwt_required
     def get(self):
         try:
-            parser = reqparse.RequestParser()
-
-            parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
-
-            data = parser.parse_args()
-        except:
-            return {"message":"error in parsing data"},400
-
-        try:
-            return query(f"""SELECT passesleft FROM STUDENTS WHERE srollno = '{data["srollno"]}'""")
+            return query(f"""SELECT * FROM districts""")
         except:
             return {"message":"Error in fetching data"},500
 
