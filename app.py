@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from resources.student import StudentRegister, StudentLogin, EditStudentdetails, Outpassstatus, GetStudentHistory
-from resources.admin import AdminRegister, AdminLogin, EditAdmindetails, GetPendingNoOfPasses, GetPassesHistory, Studentdetails, SetOutpassesleft
+from resources.admin import AdminRegister, AdminLogin, EditAdmindetails, GetDistricts, GetPassesHistory, Studentdetails, SetOutpassesleft
 from resources.outpass import OutpassApplication, PendingOutpasses, SetOutpassStatus, Outpasssdetails
 
 app = Flask(__name__)
