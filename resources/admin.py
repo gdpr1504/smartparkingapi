@@ -148,7 +148,7 @@ class GetDistricts(Resource):
             return {"message":"Error in fetching data"},500
 
 class Getzones(Resource):
-    def get(self):
+    def post(self):
         try:
             parser = reqparse.RequestParser()
 
