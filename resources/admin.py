@@ -148,7 +148,6 @@ class GetDistricts(Resource):
             return {"message":"Error in fetching data"},500
 
 class Getzones(Resource):
-    @jwt_required
     def get(self):
         try:
             parser = reqparse.RequestParser()
