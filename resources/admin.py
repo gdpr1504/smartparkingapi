@@ -144,7 +144,7 @@ class GetDistricts(Resource):
     @jwt_required
     def get(self):
         try:
-            return query(f"""SELECT * FROM districts""")
+            return query(f"""SELECT * FROM districts""",return_json=False)
         except:
             return {"message":"Error in fetching data"},500
 
