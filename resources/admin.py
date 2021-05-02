@@ -160,7 +160,7 @@ class Getzones(Resource):
             return {"message":"error in parsing data"},400
 
         try:
-            return query(f"""SELECT * FROM postal_zones WHERE did = '{data["did"]}'""",return_json=False)
+            return query(f"""SELECT * FROM postal_zones WHERE did = '{data["did"]}'""",return_json=False),200
         except:
             return {"message":"Error while fetching data"},500
 
