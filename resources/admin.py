@@ -153,7 +153,7 @@ class Getzones(Resource):
         try:
             parser = reqparse.RequestParser()
 
-            parser.add_argument('did', type = str, required = True, help = 'roll no cannot be left blank')
+            parser.add_argument('did', type = int, required = True, help = 'did cannot be left blank')
 
             data = parser.parse_args()
         except:
