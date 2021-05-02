@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from resources.student import StudentRegister, StudentLogin, EditStudentdetails, Outpassstatus, GetStudentHistory
-from resources.admin import AdminRegister, AdminLogin, EditAdmindetails, GetDistricts, GetPassesHistory, Studentdetails, SetOutpassesleft
+from resources.admin import AdminRegister, AdminLogin, EditAdmindetails, GetDistricts, Getzones, Studentdetails, SetOutpassesleft
 from resources.outpass import OutpassApplication, PendingOutpasses, SetOutpassStatus, Outpasssdetails
 
 app = Flask(__name__)
@@ -34,7 +34,7 @@ api.add_resource(PendingOutpasses, '/outpassrequests')
 api.add_resource(EditStudentdetails, '/editstudentdetails')
 api.add_resource(EditAdmindetails, '/editadmindetails')
 api.add_resource(GetDistricts, '/getdistricts')
-api.add_resource(GetPassesHistory, '/getpasseshistory')
+api.add_resource(Getzones, '/getzones')
 api.add_resource(SetOutpassStatus, '/setoutpassstatus')
 api.add_resource(Studentdetails, '/studentdetails')
 api.add_resource(Outpassstatus, '/outpassstatus')

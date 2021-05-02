@@ -147,22 +147,22 @@ class GetDistricts(Resource):
         except:
             return {"message":"Error in fetching data"},500
 
-class GetPassesHistory(Resource):
+class Getzones(Resource):
     @jwt_required
     def get(self):
         try:
             parser = reqparse.RequestParser()
 
-            parser.add_argument('srollno', type = str, required = True, help = 'roll no cannot be left blank')
+            parser.add_argument('did', type = str, required = True, help = 'roll no cannot be left blank')
 
             data = parser.parse_args()
         except:
             return {"message":"error in parsing data"},400
 
         try:
-            return query(f"""SELECT ostatus, odate FROM PASSES WHERE orollno = '{data["srollno"]}'""")
+            return query(f"""SELECT * FROM postal_zones WHERE did = '{data["did"]}'""")
         except:
-            return {"message":"Error while fetching dates"},500
+            return {"message":"Error while fetching data"},500
 
 
 class Studentdetails(Resource):
