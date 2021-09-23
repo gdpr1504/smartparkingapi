@@ -4,7 +4,7 @@ from datetime import date, time, datetime
 import pymysql
 
 def query(querystr, return_json=True):
-    connection = pymysql.connect(   host = 'iot-sp.cunlgid42qzy.ap-south-1.rds.amazonaws.com',
+    connection = pymysql.connect(   host = 'new-restore.cunlgid42qzy.ap-south-1.rds.amazonaws.com',
                                     user = 'admin',
                                     password = 'password',
                                     db = 'smart',
